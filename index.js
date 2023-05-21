@@ -25,10 +25,10 @@ app.get("/api/hello", function (req, res) {
 
 app.get("/api/:date?", function(req, res){
   let { date } = req.params
+  const dateUtc = new Date(date)
   //Retorno da data atual se nenhuma data for informada pelo usuário
   if (date === undefined) {
     date = Date.now()
-    const dateUtc = new Date(date)
     return res.json(
       {
         unix: date,
@@ -38,7 +38,6 @@ app.get("/api/:date?", function(req, res){
   }
   // Permissão de entrada de datas apenas com 10 digitos
   if (date.length === 10) {
-    const dateUtc = new Date(date)
     const resDate = Date.parse(date)
     return res.json(
       {
