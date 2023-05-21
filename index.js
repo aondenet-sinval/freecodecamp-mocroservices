@@ -66,12 +66,12 @@ app.get("/api/:date?", function(req, res){
   }
 })
 
-// // listen for requests :)
-// var listener = app.listen(process.env.PORT, function () {
-//   console.log('Your app is listening on port ' + listener.address().port);
-// });
-// Development
-const port = 33869
-var listener = app.listen(port, function () {
-  console.log('Your app is listening on port ' + port);
+// listen for requests :)
+var listener = app.listen(process.env.PORT, function () {
+  console.log('Your app is listening on port ' + listener.address().port);
 });
+// Development
+// const port = 33869
+// var listener = app.listen(port, function () {
+//   console.log('Your app is listening on port ' + port);
+// });
