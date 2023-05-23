@@ -24,43 +24,20 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get("/api/:date?", function(req, res){
-  let { date } = req.params
-  let utcDate = new Date(date)
-  // date = Number(date)
-  //Retorno da data atual se nenhuma data for informada pelo usuário
-  if ((date === undefined) || (date === '')) {
-    date = Date.parse(Date())
-    utcDate = new Date(date)
-    return res.json(
-      {
-        unix: Number(date),
-        utc: utcDate.toUTCString()
-      }
-    )
+  let { date } = req.params;
+
+  if (Number(date)) date = Number(date);
+  // Definindo newDate caso o parametro seja passado ou não
+  const newDate = date ? new Date(date) : new Date();
+  // Caso de datas inválidas
+  if (newDate == 'Invalid Date') {
+    return res.status(400).json({ error: `${newDate}`})
   }
-  // Se a variável date não for uma instância de Date ou não puder se
-  //tornar um número válido retorna um erro
-  if( !(date instanceof Date) && isNaN(date)) {
-    return res.json({
-      error: "Invalid Date"
-    })
-  }
-  // Permissão de entrada de datas apenas com 10 digitos
-  if (utcDate) {
-    let unixDate = Date.parse(date)
-    let utcValue = utcDate.toUTCString()
-    if (!unixDate) {
-      unixDate = Number(date)
-      utcValue = new Date(Number(date))
-      utcValue = utcValue.toUTCString()
-    }
-    return res.json(
-      {
-        unix: Number(unixDate),
-        utc: utcValue
-      }
-    )
-  }
+
+  const utc = newDate.toUTCString();
+  const unix = newDate.valueOf();
+
+  res.status(200).json({ unix, utc });
 })
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
