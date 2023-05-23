@@ -25,52 +25,44 @@ app.get("/api/hello", function (req, res) {
 
 app.get("/api/:date?", function(req, res){
   let { date } = req.params
-  const dateUtc = new Date(date)
+  let utcDate = new Date(date)
+  // date = Number(date)
   //Retorno da data atual se nenhuma data for informada pelo usuário
-  if (date === undefined) {
-    date = Date.now()
+  if ((date === undefined) || (date === '')) {
+    date = Date.parse(Date())
+    utcDate = new Date(date)
     return res.json(
       {
         unix: date,
-        utc: dateUtc.toUTCString()
+        utc: utcDate.toUTCString()
       }
     )
   }
-  // Permissão de entrada de datas apenas com 10 digitos
-  if (date.length === 10) {
-    const resDate = Date.parse(date)
-    return res.json(
-      {
-        unix: resDate ? resDate : date,
-        utc: dateUtc.toUTCString()
-      }
-    )
-  }
-  if ((date.length > 10) && (date.length < 14) && (!isNaN(date))) {
-    const dateUtc = new Date(Number(date))
-    const resDate = Date.parse(Number(date))
-    return res.json(
-      {
-        unix: resDate ? resDate : Number(date),
-        utc: dateUtc.toUTCString()
-      }
-    )
-  }
-  // Se a variável date não for uma instância de Date retorna um erro
-  date = new Date(date)
-  if( !(date instanceof Date && !isNaN(date)) ) {
+  // Se a variável date não for uma instância de Date ou não puder se
+  //tornar um número válido retorna um erro
+  if( !(date instanceof Date) && isNaN(date)) {
     return res.json({
       error: "Invalid Date"
     })
   }
+  // Permissão de entrada de datas apenas com 10 digitos
+  if (utcDate instanceof Date) {
+    let unixDate = Date.parse(date)
+    let utcValue = utcDate.toUTCString()
+    if (!unixDate) {
+      unixDate = Number(date)
+      utcValue = new Date(Number(date))
+      utcValue = utcValue.toUTCString()
+    }
+    return res.json(
+      {
+        unix: unixDate,
+        utc: utcValue
+      }
+    )
+  }
 })
-
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
-// Development
-// const port = 33869
-// var listener = app.listen(port, function () {
-//   console.log('Your app is listening on port ' + port);
-// });
