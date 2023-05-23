@@ -33,7 +33,7 @@ app.get("/api/:date?", function(req, res){
     utcDate = new Date(date)
     return res.json(
       {
-        unix: date,
+        unix: Number(date),
         utc: utcDate.toUTCString()
       }
     )
@@ -46,7 +46,7 @@ app.get("/api/:date?", function(req, res){
     })
   }
   // Permissão de entrada de datas apenas com 10 digitos
-  if (utcDate instanceof Date) {
+  if (utcDate) {
     let unixDate = Date.parse(date)
     let utcValue = utcDate.toUTCString()
     if (!unixDate) {
@@ -56,7 +56,7 @@ app.get("/api/:date?", function(req, res){
     }
     return res.json(
       {
-        unix: unixDate,
+        unix: Number(unixDate),
         utc: utcValue
       }
     )
